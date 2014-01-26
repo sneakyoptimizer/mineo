@@ -1,7 +1,12 @@
 #ifndef __WIN_H
 #define __WIN_H
 
+#include <mach/mach_time.h>
+#define ORWL_NANO (+1.0E-9)
+#define ORWL_GIGA UINT64_C(1000000000)
+
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <pthread.h>
 #include <sys/signal.h>
@@ -14,7 +19,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <time.h>
-#include <malloc.h>
+#include <sys/malloc.h>
 
 
 typedef void *LPVOID;
@@ -96,7 +101,7 @@ void QueryPerformanceFrequency(LARGE_INTEGER* hpc);
 
 #define Sleep(x) usleep(x*1000)
 
-#define __debugbreak() raise(SIGTRAP)
+#define __debugbreak() 
 
 #define GetTickCount() (uint32) (time(NULL) - 1383638888) * 1000 // A quick hack for time_t overflow
 
@@ -117,5 +122,49 @@ typedef struct {
 #define SetPriorityClass(pid, priority) \
     nice(priority)
 
+#pragma once
+#ifndef __TLS_H__
+#define __TLS_H__
+
+template<typename T>
+class ThreadLocalStorage
+{
+private:
+    pthread_key_t   key_;
+
+public:
+    ThreadLocalStorage()
+    {
+        pthread_key_create(&key_, NULL);
+    }
+
+    ~ThreadLocalStorage()
+    {
+        pthread_key_delete(key_);
+    }
+
+    ThreadLocalStorage& operator =(T* p)
+    {
+        pthread_setspecific(key_, p);
+        return *this;
+    }
+
+    bool operator !()
+    {
+        return pthread_getspecific(key_)==NULL;
+    }
+
+    T* operator ->()
+    {
+        return static_cast<T*>(pthread_getspecific(key_));
+    }
+
+    T* get()
+    {
+        return static_cast<T*>(pthread_getspecific(key_));
+    }
+};
+
+#endif // __TLS_H__
 
 #endif

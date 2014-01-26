@@ -22,28 +22,11 @@ void CreateThread(LPVOID ig1, size_t ig2, LPTHREAD_START_ROUTINE func, LPVOID ar
 
 void QueryPerformanceCounter(LARGE_INTEGER* hpc)
 {
-    uint64_t nsec_count;
-    struct timespec ts1;
-    uint64_t  nsec_per_tick;
-    struct timespec ts2;
-
-    if (clock_gettime(CLOCK_MONOTONIC, &ts1) != 0) {
-        printf("clock_gettime() failed");
-    }
-
-    nsec_count = ts1.tv_nsec + ts1.tv_sec * 1000000000;
-
-    if (clock_getres(CLOCK_MONOTONIC, &ts2) != 0) {
-	    printf("clock_getres() failed");
-    }
-
-    nsec_per_tick = ts2.tv_nsec + ts2.tv_sec * 1000000000;
-
-    hpc->QuadPart = (nsec_count/nsec_per_tick);
-
+  hpc->QuadPart = mach_absolute_time();
 }
 
 void QueryPerformanceFrequency(LARGE_INTEGER* hpc)
 {
     hpc->QuadPart = 1000000000;
 }
+

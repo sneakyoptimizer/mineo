@@ -5,11 +5,13 @@ app=jhProtominer
 
 all: $(app)
 
+CFLAGS=-O3
+
 .cpp.o: 
 	$(CXX) $(CFLAGS) -c -o $@ $<
 
 jhProtominer: $(obj)
-	$(CXX) $(LDFLAGS) -o $@ $(obj) -lpthread -lrt
+	$(CXX) $(LDFLAGS) -o $@ $(obj) -lpthread
 
 clean:
 	$(RM) *.o $(app)

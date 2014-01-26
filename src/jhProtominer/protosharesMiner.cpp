@@ -4,7 +4,9 @@
 #define SEARCH_SPACE_BITS		50
 #define BIRTHDAYS_PER_HASH		8
 
-__declspec(thread) uint32* __collisionMap = NULL;
+//__thread uint32* __collisionMap = NULL;
+ThreadLocalStorage<uint32> __collisionMap;
+//__declspec(thread) uint32* __collisionMap = NULL;
 
 volatile uint32 totalCollisionCount = 0;
 volatile uint32 totalShareCount = 0;
@@ -128,9 +130,10 @@ void protoshares_process_512(minerProtosharesBlock_t* block)
 	sha256_update(&c256, (unsigned char*)midHash, 32);
 	sha256_final(&c256, midHash);
 	// init collision map
-	if( __collisionMap == NULL )
+	//if( __collisionMap == NULL )
+	if(! __collisionMap)
 		__collisionMap = (uint32*)malloc(sizeof(uint32)*COLLISION_TABLE_SIZE);
-	uint32* collisionIndices = __collisionMap;
+	uint32* collisionIndices = __collisionMap.get();
 	memset(collisionIndices, 0x00, sizeof(uint32)*COLLISION_TABLE_SIZE);
 	// start search
 	uint8 tempHash[32+4];
@@ -193,9 +196,10 @@ void protoshares_process_256(minerProtosharesBlock_t* block)
 	sha256_update(&c256, (unsigned char*)midHash, 32);
 	sha256_final(&c256, midHash);
 	// init collision map
-	if( __collisionMap == NULL )
+	//if( __collisionMap == NULL )
+	if(! __collisionMap)
 		__collisionMap = (uint32*)malloc(sizeof(uint32)*COLLISION_TABLE_SIZE);
-	uint32* collisionIndices = __collisionMap;
+	uint32* collisionIndices = __collisionMap.get();
 	memset(collisionIndices, 0x00, sizeof(uint32)*COLLISION_TABLE_SIZE);
 	// start search
 	uint8 tempHash[32+4];
@@ -260,9 +264,10 @@ void protoshares_process_128(minerProtosharesBlock_t* block)
 	sha256_update(&c256, (unsigned char*)midHash, 32);
 	sha256_final(&c256, midHash);
 	// init collision map
-	if( __collisionMap == NULL )
+	//if( __collisionMap == NULL )
+	if(! __collisionMap)
 		__collisionMap = (uint32*)malloc(sizeof(uint32)*COLLISION_TABLE_SIZE);
-	uint32* collisionIndices = __collisionMap;
+	uint32* collisionIndices = __collisionMap.get();
 	memset(collisionIndices, 0x00, sizeof(uint32)*COLLISION_TABLE_SIZE);
 	// start search
 	// uint8 midHash[64];
@@ -326,9 +331,10 @@ void protoshares_process_32(minerProtosharesBlock_t* block)
 	sha256_update(&c256, (unsigned char*)midHash, 32);
 	sha256_final(&c256, midHash);
 	// init collision map
-	if( __collisionMap == NULL )
+	//if( __collisionMap == NULL )
+	if(! __collisionMap)
 		__collisionMap = (uint32*)malloc(sizeof(uint32)*COLLISION_TABLE_SIZE);
-	uint32* collisionIndices = __collisionMap;
+	uint32* collisionIndices = __collisionMap.get();
 	memset(collisionIndices, 0x00, sizeof(uint32)*COLLISION_TABLE_SIZE);
 	// start search
 	// uint8 midHash[64];
@@ -393,9 +399,10 @@ void protoshares_process_8(minerProtosharesBlock_t* block)
 	sha256_update(&c256, (unsigned char*)midHash, 32);
 	sha256_final(&c256, midHash);
 	// init collision map
-	if( __collisionMap == NULL )
+	//if( __collisionMap == NULL )
+	if(! __collisionMap)
 		__collisionMap = (uint32*)malloc(sizeof(uint32)*COLLISION_TABLE_SIZE);
-	uint32* collisionIndices = __collisionMap;
+	uint32* collisionIndices = __collisionMap.get();
 	memset(collisionIndices, 0x00, sizeof(uint32)*COLLISION_TABLE_SIZE);
 	// start search
 	// uint8 midHash[64];
